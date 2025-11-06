@@ -17,6 +17,12 @@ export function MobileMenu({
   onNavigate,
 }: MobileMenuProps) {
   console.log("🎯 MobileMenu render - isOpen:", isOpen);
+  
+  if (!isOpen) {
+    console.log("🎯 Menu is closed, not rendering");
+  } else {
+    console.log("🎯 Menu is OPEN, rendering now!");
+  }
 
   const menuItems = [
     { id: "home", label: "Home", icon: Home },
@@ -35,19 +41,16 @@ export function MobileMenu({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-40 md:hidden"
-        style={{
-          display: isOpen ? "block" : "none",
-          opacity: isOpen ? 1 : 0,
-          transition: "opacity 0.3s ease-out",
-        }}
-        onClick={onClose}
-      />
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[9998] md:hidden"
+          onClick={onClose}
+        />
+      )}
 
       {/* Bottom Sheet Menu */}
       <div
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 md:hidden"
+        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[9999] md:hidden"
         style={{
           transform: isOpen ? "translateY(0)" : "translateY(100%)",
           transition: "transform 0.3s ease-out",

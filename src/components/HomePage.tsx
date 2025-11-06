@@ -125,9 +125,7 @@ export function HomePage({
 
               {/* Mobile Hamburger Menu */}
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   console.log("🍔 Hamburger clicked!");
                   console.log("🍔 onMenuClick exists?", !!onMenuClick);
                   if (onMenuClick) {
@@ -135,13 +133,12 @@ export function HomePage({
                     onMenuClick();
                   }
                 }}
-                className="md:hidden flex flex-col gap-1.5 p-2 hover:bg-white/20 rounded transition-colors relative z-[9999] cursor-pointer"
+                className="md:hidden flex flex-col gap-1.5 p-3 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
                 aria-label="Menu"
                 type="button"
-                style={{ touchAction: "manipulation" }}
               >
-                <span className="w-6 h-0.5 bg-white rounded-full block" />
-                <span className="w-6 h-0.5 bg-white rounded-full block" />
+                <span className="w-6 h-0.5 bg-white rounded-full" />
+                <span className="w-6 h-0.5 bg-white rounded-full" />
               </button>
             </div>
           </div>
@@ -183,7 +180,7 @@ export function HomePage({
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-slate-50">
+      <section className="py-20 px-4 bg-white">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
@@ -258,7 +255,7 @@ export function HomePage({
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-slate-50">
+      <section className="py-20 px-4 bg-white">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
@@ -318,7 +315,7 @@ export function HomePage({
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50 py-12 px-4">
+      <footer className="border-t border-slate-200 bg-white py-12 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8">
             <div>

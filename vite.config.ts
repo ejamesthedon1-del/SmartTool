@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ["l7wvnf-5173.csb.app"], // 👈 your sandbox host
+    allowedHosts: ["vl75sh-5173.csb.app"], // 👈 your sandbox host
     host: true,
     port: 5173,
   },

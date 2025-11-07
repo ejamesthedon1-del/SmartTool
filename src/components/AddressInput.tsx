@@ -132,6 +132,14 @@ export function AddressInput({ onAnalyze, onNavigate, onMenuClick }: AddressInpu
         throw error;
       }
 
+      // Ensure we have valid analysis data
+      if (!analysisData) {
+        throw new Error("No analysis data returned");
+      }
+
+      console.log("Analysis data received:", analysisData);
+
+      // Small delay for UX, then navigate to dashboard with data
       setTimeout(() => {
         setAnalyzing(false);
         onAnalyze(address, analysisData);

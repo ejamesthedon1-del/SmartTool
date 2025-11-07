@@ -56,21 +56,26 @@ export default function App() {
 
   const handleGetStarted = () => {
     setCurrentView("address-input");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAnalyze = (address: string, data: AnalysisData) => {
     setEnteredAddress(address);
     setAnalysisData(data);
     setCurrentView("dashboard");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubscribe = () => {
     setCurrentView("marketing-plan");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavigate = (view: View) => {
     setCurrentView(view);
     setIsMobileMenuOpen(false);
+    // Scroll to top on page transition
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleMenuClick = () => {

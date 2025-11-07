@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { CreditCard, Loader2, Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 interface PaymentFormProps {
   amount: number;
@@ -18,39 +19,25 @@ export function PaymentForm({
   onSuccess,
   onCancel,
 }: PaymentFormProps) {
+  const stripe = useStripe();
+  const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCvc] = useState("");
   const [name, setName] = useState("");
-
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || "";
-    const parts = [];
-
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-
-    if (parts.length) {
-      return parts.join(" ");
-    } else {
-      return value;
-    }
-  };
-
-  const formatExpiry = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    if (v.length >= 2) {
-      return v.slice(0, 2) + (v.length > 2 ? " / " + v.slice(2, 4) : "");
-    }
-    return v;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!stripe || !elements) {
+      toast.error("Stripe has not loaded yet. Please try again.");
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      toast.error("Card element not found");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -80,36 +67,53 @@ export function PaymentForm({
         throw new Error(error.error || "Failed to create payment intent");
       }
 
-      const { paymentIntentId } = await response.json();
+      const { clientSecret, paymentIntentId } = await response.json();
 
-      // In a real implementation, you would use Stripe Elements here
-      // For demo purposes, we'll simulate a successful payment
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Verify payment
-      const verifyResponse = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-52cdd920/verify-payment`,
+      // Confirm payment with Stripe
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${publicAnonKey}`,
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: name,
+            },
           },
-          body: JSON.stringify({
-            paymentIntentId,
-          }),
         }
       );
 
-      if (!verifyResponse.ok) {
-        throw new Error("Failed to verify payment");
+      if (stripeError) {
+        throw new Error(stripeError.message || "Payment failed");
       }
 
-      const { success } = await verifyResponse.json();
+      if (paymentIntent.status === "succeeded") {
+        // Verify payment on server
+        const verifyResponse = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/make-server-52cdd920/verify-payment`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${publicAnonKey}`,
+            },
+            body: JSON.stringify({
+              paymentIntentId,
+            }),
+          }
+        );
 
-      if (success) {
-        toast.success("Payment successful!");
-        onSuccess();
+        if (!verifyResponse.ok) {
+          throw new Error("Failed to verify payment");
+        }
+
+        const { success } = await verifyResponse.json();
+
+        if (success) {
+          toast.success("Payment successful!");
+          onSuccess();
+        } else {
+          throw new Error("Payment verification failed");
+        }
       } else {
         throw new Error("Payment was not successful");
       }
@@ -137,56 +141,33 @@ export function PaymentForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="cardNumber">Card Number</Label>
-        <div className="relative">
-          <CreditCard className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-          <Input
-            id="cardNumber"
-            type="text"
-            placeholder="1234 5678 9012 3456"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-            maxLength={19}
-            className="pl-10"
-            required
-            disabled={loading}
+        <Label>Card Details</Label>
+        <div className="border rounded-lg p-3 bg-white">
+          <CardElement
+            options={{
+              style: {
+                base: {
+                  fontSize: "16px",
+                  color: "#0f172a",
+                  "::placeholder": {
+                    color: "#94a3b8",
+                  },
+                },
+                invalid: {
+                  color: "#ef4444",
+                },
+              },
+              hidePostalCode: true,
+            }}
           />
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="expiry">Expiry Date</Label>
-          <Input
-            id="expiry"
-            type="text"
-            placeholder="MM / YY"
-            value={expiry}
-            onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-            maxLength={7}
-            required
-            disabled={loading}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="cvc">CVC</Label>
-          <Input
-            id="cvc"
-            type="text"
-            placeholder="123"
-            value={cvc}
-            onChange={(e) =>
-              setCvc(e.target.value.replace(/\D/g, "").slice(0, 4))
-            }
-            maxLength={4}
-            required
-            disabled={loading}
-          />
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Test card: 4242 4242 4242 4242 • Any future date • Any 3 digits
+        </p>
       </div>
 
       <div className="pt-4 space-y-3">
-        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+        <Button type="submit" className="w-full" size="lg" disabled={loading || !stripe}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

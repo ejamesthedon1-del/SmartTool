@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { PaymentForm } from "./PaymentForm";
+import { StripeProvider } from "./StripeProvider";
 
 interface SubscriptionDialogProps {
   open: boolean;
@@ -93,16 +94,18 @@ export function SubscriptionDialog({ open, onOpenChange, onSubscribe, address = 
             </div>
           ) : (
             <div className="pt-4">
-              <PaymentForm
-                amount={99}
-                address={address}
-                onSuccess={() => {
-                  if (onSubscribe) {
-                    onSubscribe();
-                  }
-                }}
-                onCancel={() => setShowPayment(false)}
-              />
+              <StripeProvider>
+                <PaymentForm
+                  amount={99}
+                  address={address}
+                  onSuccess={() => {
+                    if (onSubscribe) {
+                      onSubscribe();
+                    }
+                  }}
+                  onCancel={() => setShowPayment(false)}
+                />
+              </StripeProvider>
             </div>
           )}
         </div>

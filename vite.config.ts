@@ -7,6 +7,6 @@ export default defineConfig({
   server: {
     allowedHosts: ["8vwc36-2222.csb.app"], // 👈 your sandbox host
     host: true,
-    port: 2222,
+    port: 2223,
   },
 });

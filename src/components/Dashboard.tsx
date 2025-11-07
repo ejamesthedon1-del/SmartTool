@@ -93,12 +93,15 @@ export function Dashboard({ onSubscribe, onNavigate, address, analysisData, onMe
     }
   }, [analysisData]);
 
-  // Show empty state if no analysis data
+  // Show empty state if no analysis data - redirect to address input
   if (!analysisData) {
     return (
-      <LockedDashboard 
-        onAnalyze={() => onNavigate("address-input")}
-      />
+      <div className="min-h-screen bg-white">
+        <Navigation currentView="dashboard" onNavigate={onNavigate} onMenuClick={onMenuClick} />
+        <LockedDashboard 
+          onAnalyze={() => onNavigate("address-input")}
+        />
+      </div>
     );
   }
 

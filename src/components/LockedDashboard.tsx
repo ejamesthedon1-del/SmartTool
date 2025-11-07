@@ -9,8 +9,7 @@ interface LockedDashboardProps {
 
 export function LockedDashboard({ onAnalyze }: LockedDashboardProps) {
   return (
-    <div className="min-h-screen bg-white">
-      <main className="container mx-auto px-4 pt-24 pb-12">
+    <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="max-w-4xl mx-auto">
           {/* Locked Dashboard Preview */}
           <div className="relative">
@@ -143,6 +142,5 @@ export function LockedDashboard({ onAnalyze }: LockedDashboardProps) {
           </motion.div>
         </div>
       </main>
-    </div>
   );
 }

@@ -93,6 +93,10 @@ export function AddressInput({ onAnalyze, onNavigate, onMenuClick }: AddressInpu
     setShowSuggestions(false);
     setPredictions([]);
     setSelectedIndex(-1);
+    // Focus the input after selection to allow immediate submission
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

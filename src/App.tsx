@@ -1,28 +1,46 @@
 import { useState } from "react";
+import { HomePage } from "./components/HomePage";
 
-// Simple debug component
+type View = "home" | "address-input" | "dashboard" | "marketing-plan";
+
 export default function App() {
-  const [currentView, setCurrentView] = useState("home");
-
-  // Debug: Log that App is rendering
+  const [currentView, setCurrentView] = useState<View>("home");
   console.log("🚀 App is rendering, currentView:", currentView);
 
+  const handleGetStarted = () => {
+    setCurrentView("address-input");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigate = (view: View) => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleMenuClick = () => {
+    console.log("🍔 App: Menu clicked");
+  };
+
+  // Test only HomePage first
+  if (currentView === "home") {
+    return (
+      <div>
+        <div style={{ padding: "10px", background: "yellow", textAlign: "center" }}>
+          DEBUG: Testing HomePage only
+        </div>
+        <HomePage 
+          onGetStarted={handleGetStarted} 
+          onNavigate={handleNavigate}
+          onMenuClick={handleMenuClick}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: "20px", background: "lightblue", minHeight: "100vh" }}>
-      <h1>🚀 DEBUG TEST PAGE</h1>
-      <p>If you see this, React is working! Current view: {currentView}</p>
-      <button 
-        onClick={() => setCurrentView("dashboard")}
-        style={{ padding: "10px 20px", background: "blue", color: "white", marginRight: "10px" }}
-      >
-        Test Dashboard
-      </button>
-      <button 
-        onClick={() => setCurrentView("home")}
-        style={{ padding: "10px 20px", background: "green", color: "white" }}
-      >
-        Test Home
-      </button>
+    <div style={{ padding: "20px", background: "lightblue" }}>
+      <h1>Other views not implemented yet</h1>
+      <button onClick={() => setCurrentView("home")}>Back to Home</button>
     </div>
   );
 }

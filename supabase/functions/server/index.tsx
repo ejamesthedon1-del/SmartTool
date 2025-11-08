@@ -1,22 +1,27 @@
 // Deno Edge Function for Supabase
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.0.0?target=deno";
+
 const stripe = new Stripe(Deno.env.get("VITE_STRIPE_SECRET_KEY") || "", {
   apiVersion: "2025-10-29.clover",
   httpClient: Stripe.createFetchHttpClient()
 });
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
 };
-serve(async (req)=>{
+
+serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
       headers: corsHeaders
     });
   }
+
   const url = new URL(req.url);
   const path = url.pathname;
+
   try {
     // Health check
     if (path.includes("/health")) {
@@ -29,6 +34,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // Create payment intent
     if (path.includes("/create-payment-intent") && req.method === "POST") {
       const { amount, address } = await req.json();
@@ -43,6 +49,7 @@ serve(async (req)=>{
           }
         });
       }
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100),
         currency: "usd",
@@ -54,6 +61,7 @@ serve(async (req)=>{
           enabled: true
         }
       });
+
       return new Response(JSON.stringify({
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id
@@ -64,6 +72,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // Verify payment
     if (path.includes("/verify-payment") && req.method === "POST") {
       const { paymentIntentId } = await req.json();
@@ -78,7 +87,9 @@ serve(async (req)=>{
           }
         });
       }
+
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
       return new Response(JSON.stringify({
         success: paymentIntent.status === "succeeded",
         status: paymentIntent.status
@@ -89,6 +100,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // Check subscription
     if (path.includes("/check-subscription") && req.method === "POST") {
       const { address } = await req.json();
@@ -103,6 +115,7 @@ serve(async (req)=>{
           }
         });
       }
+
       return new Response(JSON.stringify({
         hasSubscription: false,
         subscription: null
@@ -113,6 +126,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // Google Places Autocomplete
     if (path.includes("/places-autocomplete") && req.method === "POST") {
       const { input } = await req.json();
@@ -127,6 +141,7 @@ serve(async (req)=>{
           }
         });
       }
+
       const apiKey = Deno.env.get("VITE_GOOGLE_PLACES_API_KEY");
       if (!apiKey) {
         return new Response(JSON.stringify({
@@ -139,9 +154,11 @@ serve(async (req)=>{
           }
         });
       }
+
       const placesUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=address&components=country:us&key=${apiKey}`;
       const response = await fetch(placesUrl);
       const data = await response.json();
+
       if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
         return new Response(JSON.stringify({
           error: `Places API error: ${data.status}`
@@ -153,6 +170,7 @@ serve(async (req)=>{
           }
         });
       }
+
       return new Response(JSON.stringify({
         predictions: data.predictions || []
       }), {
@@ -162,6 +180,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // Google Places Details
     if (path.includes("/places-details") && req.method === "POST") {
       const { placeId } = await req.json();
@@ -176,6 +195,7 @@ serve(async (req)=>{
           }
         });
       }
+
       const apiKey = Deno.env.get("VITE_GOOGLE_PLACES_API_KEY");
       if (!apiKey) {
         return new Response(JSON.stringify({
@@ -188,9 +208,11 @@ serve(async (req)=>{
           }
         });
       }
+
       const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=formatted_address,address_components,geometry&key=${apiKey}`;
       const response = await fetch(detailsUrl);
       const data = await response.json();
+
       if (data.status !== "OK") {
         return new Response(JSON.stringify({
           error: `Places API error: ${data.status}`
@@ -202,6 +224,7 @@ serve(async (req)=>{
           }
         });
       }
+
       return new Response(JSON.stringify({
         result: data.result
       }), {
@@ -211,6 +234,7 @@ serve(async (req)=>{
         }
       });
     }
+
     // AI Listing Analysis - FIXED VERSION
     if (path.includes("/analyze-listing") && req.method === "POST") {
       const { address } = await req.json();
@@ -225,6 +249,7 @@ serve(async (req)=>{
           }
         });
       }
+
       const apiKey = Deno.env.get("VITE_GEMINI_API_KEY");
       if (!apiKey) {
         return new Response(JSON.stringify({
@@ -237,6 +262,7 @@ serve(async (req)=>{
           }
         });
       }
+
       const prompt = `You are a real estate listing analysis AI. Analyze this property address and provide a detailed JSON response with the following structure:
 
 {
@@ -277,6 +303,7 @@ serve(async (req)=>{
 }
 
 Provide realistic data for the address: ${address}`;
+
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const geminiResponse = await fetch(geminiUrl, {
         method: "POST",
@@ -300,6 +327,7 @@ Provide realistic data for the address: ${address}`;
           }
         })
       });
+
       if (!geminiResponse.ok) {
         const errorText = await geminiResponse.text();
         console.error("Gemini API error:", errorText);
@@ -313,6 +341,7 @@ Provide realistic data for the address: ${address}`;
           }
         });
       }
+
       const geminiData = await geminiResponse.json();
       const aiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!aiText) {
@@ -327,6 +356,7 @@ Provide realistic data for the address: ${address}`;
           }
         });
       }
+
       // Parse the JSON response
       let aiAnalysis;
       try {
@@ -344,6 +374,7 @@ Provide realistic data for the address: ${address}`;
           }
         });
       }
+
       return new Response(JSON.stringify(aiAnalysis), {
         headers: {
           ...corsHeaders,
@@ -351,6 +382,7 @@ Provide realistic data for the address: ${address}`;
         }
       });
     }
+
     return new Response(JSON.stringify({
       error: "Not found"
     }), {
@@ -360,6 +392,7 @@ Provide realistic data for the address: ${address}`;
         "Content-Type": "application/json"
       }
     });
+
   } catch (error) {
     console.error("Error:", error);
     return new Response(JSON.stringify({

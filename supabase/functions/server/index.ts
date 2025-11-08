@@ -1,4 +1,4 @@
-// Deno Edge Function for Supabase
+// Deno Edge Function for Supabase - CLEAN VERSION
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.0.0?target=deno";
 
@@ -235,7 +235,7 @@ serve(async (req) => {
       });
     }
 
-    // AI Listing Analysis - FIXED VERSION
+    // AI Listing Analysis
     if (path.includes("/analyze-listing") && req.method === "POST") {
       const { address } = await req.json();
       if (!address) {
@@ -357,7 +357,6 @@ Provide realistic data for the address: ${address}`;
         });
       }
 
-      // Parse the JSON response
       let aiAnalysis;
       try {
         const jsonText = aiText.trim().replace(/```json\n?|```/g, "");

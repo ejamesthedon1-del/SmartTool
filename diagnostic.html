@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnostic Test</title>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <h1>Diagnostic Test</h1>
+    <p>If you can see this, the server is working.</p>
+    <p>Testing components...</p>
+    <div id="test"></div>
+    
+    <script type="module">
+        import React from 'react';
+        import ReactDOM from 'react-dom/client';
+        
+        const TestApp = () => {
+            return React.createElement('div', null, 
+                React.createElement('h2', null, 'React is working!'),
+                React.createElement('p', null, 'Current time: ' + new Date().toLocaleString())
+            );
+        };
+        
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('test'));
+            root.render(React.createElement(TestApp));
+            console.log('React test successful');
+        } catch (error) {
+            console.error('React test failed:', error);
+            document.getElementById('test').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+        }
+    </script>
+</body>
+</html>

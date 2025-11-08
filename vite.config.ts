@@ -5,8 +5,16 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ["8vwc36-2223.csb.app"], // 👈 your sandbox host
+    allowedHosts: ["8vwc36-2223.csb.app"], // 🐸 your sandbox host
     host: true,
     port: 2223,
+  },
+  css: {
+    devSourcemap: true,
+  },
+  build: {
+    rollupOptions: {
+      external: [],
+    },
   },
 });

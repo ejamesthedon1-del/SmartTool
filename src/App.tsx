@@ -1,131 +1,28 @@
 import { useState } from "react";
-import { HomePage } from "./components/HomePage";
-import { AddressInput } from "./components/AddressInput";
-import { Dashboard } from "./components/Dashboard";
-import { MarketingPlan } from "./components/MarketingPlan";
-import { MobileMenu } from "./components/MobileMenu";
-import { Toaster } from "./components/ui/sonner";
 
-type View = "home" | "address-input" | "dashboard" | "marketing-plan";
-
-export interface AnalysisData {
-  listing: {
-    address: string;
-    city: string;
-    propertyType: string;
-    price: string;
-    pricePerSqft: string;
-    beds: number;
-    baths: number;
-    sqft: string;
-    daysOnMarket: number;
-  };
-  overallScore: number;
-  ratings: Array<{
-    title: string;
-    score: number;
-    maxScore: number;
-    category: string;
-    description: string;
-  }>;
-  categoryScores: Array<{
-    category: string;
-    score: number;
-  }>;
-  radarData: Array<{
-    subject: string;
-    A: number;
-    fullMark: number;
-  }>;
-  insights: {
-    summary: string;
-    alerts: Array<{
-      type: string;
-      title: string;
-      message: string;
-    }>;
-    topPriorities: string[];
-  };
-}
-
+// Simple debug component
 export default function App() {
-  const [currentView, setCurrentView] = useState<View>("home");
-  const [enteredAddress, setEnteredAddress] = useState("");
-  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentView, setCurrentView] = useState("home");
 
-  const handleGetStarted = () => {
-    setCurrentView("address-input");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleAnalyze = (address: string, data: AnalysisData) => {
-    setEnteredAddress(address);
-    setAnalysisData(data);
-    setCurrentView("dashboard");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSubscribe = () => {
-    setCurrentView("marketing-plan");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleNavigate = (view: View) => {
-    setCurrentView(view);
-    setIsMobileMenuOpen(false);
-    // Scroll to top on page transition
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleMenuClick = () => {
-    console.log("🍔 App: Menu clicked, opening mobile menu");
-    setIsMobileMenuOpen(true);
-  };
-
-  const handleMenuClose = () => {
-    console.log("🍔 App: Closing mobile menu");
-    setIsMobileMenuOpen(false);
-  };
+  // Debug: Log that App is rendering
+  console.log("🚀 App is rendering, currentView:", currentView);
 
   return (
-    <>
-      {currentView === "home" && (
-        <HomePage 
-          onGetStarted={handleGetStarted} 
-          onNavigate={handleNavigate}
-          onMenuClick={handleMenuClick}
-        />
-      )}
-      {currentView === "address-input" && (
-        <AddressInput 
-          onAnalyze={handleAnalyze} 
-          onNavigate={handleNavigate}
-          onMenuClick={handleMenuClick}
-        />
-      )}
-      {currentView === "dashboard" && (
-        <Dashboard
-          onSubscribe={handleSubscribe}
-          onNavigate={handleNavigate}
-          address={enteredAddress}
-          analysisData={analysisData}
-          onMenuClick={handleMenuClick}
-        />
-      )}
-      {currentView === "marketing-plan" && (
-        <MarketingPlan onNavigate={handleNavigate} onMenuClick={handleMenuClick} />
-      )}
-      
-      {/* Mobile Menu */}
-      <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={handleMenuClose}
-        currentView={currentView}
-        onNavigate={handleNavigate}
-      />
-      
-      <Toaster />
-    </>
+    <div style={{ padding: "20px", background: "lightblue", minHeight: "100vh" }}>
+      <h1>🚀 DEBUG TEST PAGE</h1>
+      <p>If you see this, React is working! Current view: {currentView}</p>
+      <button 
+        onClick={() => setCurrentView("dashboard")}
+        style={{ padding: "10px 20px", background: "blue", color: "white", marginRight: "10px" }}
+      >
+        Test Dashboard
+      </button>
+      <button 
+        onClick={() => setCurrentView("home")}
+        style={{ padding: "10px 20px", background: "green", color: "white" }}
+      >
+        Test Home
+      </button>
+    </div>
   );
 }

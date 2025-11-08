@@ -1,39 +1,95 @@
 import { useState } from "react";
 import { HomePage } from "./components/HomePage";
 import { AddressInput } from "./components/AddressInput";
+import { Dashboard } from "./components/Dashboard";
+import { MarketingPlan } from "./components/MarketingPlan";
+import { MobileMenu } from "./components/MobileMenu";
+import { Toaster } from "./components/ui/sonner";
 
 type View = "home" | "address-input" | "dashboard" | "marketing-plan";
 
+export interface AnalysisData {
+  listing: {
+    address: string;
+    city: string;
+    propertyType: string;
+    price: string;
+    pricePerSqft: string;
+    beds: number;
+    baths: number;
+    sqft: string;
+    daysOnMarket: number;
+  };
+  overallScore: number;
+  ratings: Array<{
+    title: string;
+    score: number;
+    maxScore: number;
+    category: string;
+    description: string;
+  }>;
+  categoryScores: Array<{
+    category: string;
+    score: number;
+  }>;
+  radarData: Array<{
+    subject: string;
+    A: number;
+    fullMark: number;
+  }>;
+  insights: {
+    summary: string;
+    alerts: Array<{
+      type: string;
+      title: string;
+      message: string;
+    }>;
+    topPriorities: string[];
+  };
+}
+
 export default function App() {
   const [currentView, setCurrentView] = useState<View>("home");
-  console.log("🚀 App is rendering, currentView:", currentView);
+  const [enteredAddress, setEnteredAddress] = useState("");
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleGetStarted = () => {
     setCurrentView("address-input");
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleAnalyze = (address: string, data: AnalysisData) => {
+    setEnteredAddress(address);
+    setAnalysisData(data);
+    setCurrentView("dashboard");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubscribe = () => {
+    setCurrentView("marketing-plan");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleNavigate = (view: View) => {
     setCurrentView(view);
+    setIsMobileMenuOpen(false);
+    // Scroll to top on page transition
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleMenuClick = () => {
-    console.log("🍔 App: Menu clicked");
+    console.log("🍔 App: Menu clicked, opening mobile menu");
+    setIsMobileMenuOpen(true);
   };
 
-  const handleAnalyze = () => {
-    console.log("📊 Analyze clicked");
-    setCurrentView("dashboard");
+  const handleMenuClose = () => {
+    console.log("🍔 App: Closing mobile menu");
+    setIsMobileMenuOpen(false);
   };
 
-  // Test HomePage and AddressInput
   return (
-    <div>
-      <div style={{ padding: "10px", background: "yellow", textAlign: "center" }}>
-        DEBUG: Testing HomePage + AddressInput | Current view: {currentView}
-      </div>
-      
+    <>
       {currentView === "home" && (
         <HomePage 
           onGetStarted={handleGetStarted} 
@@ -41,26 +97,35 @@ export default function App() {
           onMenuClick={handleMenuClick}
         />
       )}
-      
       {currentView === "address-input" && (
-        <div style={{ padding: "20px" }}>
-          <AddressInput 
-            onAnalyze={handleAnalyze} 
-            onNavigate={handleNavigate}
-            onMenuClick={handleMenuClick}
-          />
-          <button onClick={() => setCurrentView("home")} style={{ marginTop: "20px" }}>
-            ← Back to Home
-          </button>
-        </div>
+        <AddressInput 
+          onAnalyze={handleAnalyze} 
+          onNavigate={handleNavigate}
+          onMenuClick={handleMenuClick}
+        />
+      )}
+      {currentView === "dashboard" && (
+        <Dashboard
+          onSubscribe={handleSubscribe}
+          onNavigate={handleNavigate}
+          address={enteredAddress}
+          analysisData={analysisData}
+          onMenuClick={handleMenuClick}
+        />
+      )}
+      {currentView === "marketing-plan" && (
+        <MarketingPlan onNavigate={handleNavigate} onMenuClick={handleMenuClick} />
       )}
       
-      {currentView === "dashboard" && (
-        <div style={{ padding: "20px", background: "lightgreen" }}>
-          <h1>📊 Dashboard View (Not implemented yet)</h1>
-          <button onClick={() => setCurrentView("home")}>Back to Home</button>
-        </div>
-      )}
-    </div>
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={handleMenuClose}
+        currentView={currentView}
+        onNavigate={handleNavigate}
+      />
+      
+      <Toaster />
+    </>
   );
 }

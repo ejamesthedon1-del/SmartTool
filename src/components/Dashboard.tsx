@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrendingUp, Eye, DollarSign, MapPin, Bed, Bath, Square, Calendar, AlertTriangle, Home, Sparkles, CheckCircle2, Camera, Clock, Bell, Settings, Menu, X, LogOut, Users, Heart, Share2 } from "lucide-react";
+import { TrendingUp, Eye, DollarSign, MapPin, Bed, Bath, Square, Calendar, AlertTriangle } from "lucide-react";
 import { RatingCard } from "./RatingCard";
 import { LockedSection } from "./LockedSection";
 import { SubscriptionDialog } from "./SubscriptionDialog";
@@ -10,7 +10,6 @@ import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Progress } from "./ui/progress";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { Logo } from "../smart-realtor/Logo";
 import {
   BarChart,
   Bar,
@@ -111,10 +110,10 @@ export function Dashboard({ onSubscribe, onNavigate, address, analysisData, onMe
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-white">
       <Navigation currentView="dashboard" onNavigate={onNavigate} onMenuClick={onMenuClick} />
 
-      <main className="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+      <main className="container mx-auto px-4 pt-24 pb-12">
         {/* Alert Banner */}
         {insights.alerts.length > 0 && (
           <Card className="p-4 mb-6 bg-destructive/10 border-destructive/20">
@@ -130,131 +129,95 @@ export function Dashboard({ onSubscribe, onNavigate, address, analysisData, onMe
           </Card>
         )}
 
-        {/* Property Header */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 overflow-hidden mb-6">
-          <div className="grid lg:grid-cols-2 gap-6 p-4 md:p-6">
-            {/* Property Image */}
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 shadow-md">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1706808849780-7a04fbac83ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBtb2Rlcm4lMjBob3VzZSUyMGV4dGVyaW9yfGVufDF8fHx8MTc2MjUwMDU1MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt={listing.address}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
-                />
-              </div>
-              <div className="absolute top-3 left-3">
-                <Badge className="bg-green-100 text-green-800 border-green-300">
-                  Active Listing
-                </Badge>
-              </div>
-              <div className="absolute top-3 right-3">
-                <div className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 animate-pulse" />
-                    <span className="text-xs text-slate-700">Live</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Property Details */}
-            <div className="flex flex-col justify-between">
-              <div>
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h2 className="text-slate-900 mb-1">{listing.address}</h2>
-                    <div className="flex items-center gap-2 text-slate-600 mb-3">
-                      <MapPin className="w-4 h-4" />
-                      <span>{listing.city}</span>
-                    </div>
-                  </div>
-                  <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-xl px-4 py-3 text-center shadow-lg">
-                    <div className="text-xs opacity-90 mb-0.5">AI Score</div>
-                    <div className="text-3xl">{overallScore}</div>
-                    <div className="text-xs opacity-75">
-                      {overallScore >= 80 ? "Excellent" : overallScore >= 60 ? "Good" : "Needs Work"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3 border border-slate-200">
-                    <div className="text-xs text-slate-600 mb-1">List Price</div>
-                    <div className="text-slate-900 text-lg">{listing.price}</div>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3 border border-slate-200">
-                    <div className="text-xs text-slate-600 mb-1">Days on Market</div>
-                    <div className="text-slate-900 text-lg">{listing.daysOnMarket} days</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="bg-white rounded-lg p-2.5 border border-slate-200 text-center hover:border-blue-300 transition-colors cursor-pointer">
-                    <Home className="w-4 h-4 text-blue-600 mx-auto mb-1" />
-                    <div className="text-xs text-slate-600">{listing.beds} Beds</div>
-                  </div>
-                  <div className="bg-white rounded-lg p-2.5 border border-slate-200 text-center hover:border-blue-300 transition-colors cursor-pointer">
-                    <Bath className="w-4 h-4 text-blue-600 mx-auto mb-1" />
-                    <div className="text-xs text-slate-600">{listing.baths} Baths</div>
-                  </div>
-                  <div className="bg-white rounded-lg p-2.5 border border-slate-200 text-center hover:border-blue-300 transition-colors cursor-pointer">
-                    <Square className="w-4 h-4 text-blue-600 mx-auto mb-1" />
-                    <div className="text-xs text-slate-600">{listing.sqft} sqft</div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-3">
-                  <p className="text-xs text-slate-700 leading-relaxed">
-                    {listing.propertyType} • {listing.pricePerSqft}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Analytics Grid */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-6">
-          {/* Overall Score Card */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-slate-200/50 p-4 md:p-6">
-            <h3 className="text-slate-900 mb-1 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              Overall Listing Performance
-            </h3>
-            <p className="text-sm text-slate-600 mb-5">AI-powered analysis summary</p>
-            
+        {/* Top Row: Overall Score and Property Overview */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          {/* Overall AI Score */}
+          <Card className="p-6 bg-gradient-to-br from-primary/5 to-background">
+            <Badge className="mb-4" variant="secondary">
+              AI Analysis Complete
+            </Badge>
+            <h2 className="mb-2">Overall Listing Score</h2>
             <div className="flex items-center gap-4 mb-6">
-              <div className="text-5xl text-slate-900">{overallScore}</div>
+              <div className="text-5xl">{overallScore}</div>
               <div className="text-xl text-muted-foreground">/100</div>
             </div>
             <Progress value={overallScore} className="h-3 mb-4" />
             <p className="text-muted-foreground">
               {insights.summary}
             </p>
-          </div>
+          </Card>
 
-          {/* AI Insights */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-4 md:p-6">
-            <h3 className="text-slate-900 mb-1 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-blue-600" />
-              AI Insights
-            </h3>
-            <p className="text-sm text-slate-600 mb-5">Smart recommendations</p>
-
-            <div className="space-y-3">
-              {insights.topPriorities.slice(0, 3).map((priority, index) => (
-                <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/50 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="flex items-start gap-2 mb-2">
-                    <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-xs text-slate-900">Priority {index + 1}</div>
+          {/* Property Overview */}
+          <Card className="p-6">
+            <div className="grid grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <ImageWithFallback
+                  src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"
+                  alt="Property"
+                  className="w-full h-32 object-cover rounded-lg"
+                />
+              </div>
+              
+              <div className="col-span-2 space-y-3">
+                <div>
+                  <h3 className="mb-1">{listing.address}</h3>
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm">{listing.city}</span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {priority}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{listing.propertyType}</p>
                 </div>
-              ))}
+
+                <Separator />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col">
+                    <div className="text-xs text-muted-foreground mb-1">Price</div>
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="w-3 h-3 text-muted-foreground" />
+                      <div className="text-sm">{listing.price}</div>
+                    </div>
+                    <div className="text-xs text-muted-foreground">{listing.pricePerSqft}</div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xs text-muted-foreground mb-1">Beds</div>
+                    <div className="flex items-center gap-1">
+                      <Bed className="w-3 h-3 text-muted-foreground" />
+                      <div className="text-sm">{listing.beds}</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xs text-muted-foreground mb-1">Baths</div>
+                    <div className="flex items-center gap-1">
+                      <Bath className="w-3 h-3 text-muted-foreground" />
+                      <div className="text-sm">{listing.baths}</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xs text-muted-foreground mb-1">Sq Ft</div>
+                    <div className="flex items-center gap-1">
+                      <Square className="w-3 h-3 text-muted-foreground" />
+                      <div className="text-sm">{listing.sqft}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Calendar className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {listing.daysOnMarket} days on market
+                    </span>
+                  </div>
+                  {listing.daysOnMarket > 45 && (
+                    <Badge variant="destructive" className="text-xs">
+                      Extended Market Time
+                    </Badge>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Detailed Ratings */}
@@ -352,8 +315,7 @@ export function Dashboard({ onSubscribe, onNavigate, address, analysisData, onMe
           <LockedSection onSubscribe={handleSubscribe} />
         </div>
       </main>
-      
-      <Footer />
+        <Footer />
 
       <SubscriptionDialog open={dialogOpen} onOpenChange={setDialogOpen} onSubscribe={handleSubscriptionComplete} address={address} />
     </div>

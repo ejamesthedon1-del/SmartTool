@@ -2,6 +2,7 @@ import {
   ArrowRight,
   CheckCircle,
   Star,
+  Zap,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
@@ -105,13 +106,23 @@ export function HomePage({
             Get instant AI-powered analysis of your property listings to sell
             faster, optimize pricing, and create winning marketing strategies.
           </p>
-          <Button
-            size="lg"
-            onClick={onGetStarted}
-            className="bg-white text-blue-600 hover:bg-slate-50 shadow-xl gap-2"
-          >
-            Get Started Free <ArrowRight className="w-4 h-4" />
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              size="lg"
+              onClick={onGetStarted}
+              className="bg-white text-blue-600 hover:bg-slate-50 shadow-xl gap-2"
+            >
+              Analyze Property <ArrowRight className="w-4 h-4" />
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => onNavigate("superninja")}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-xl gap-2"
+            >
+              <Zap className="w-5 h-5" />
+              Try SuperNinja AI <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Dashboard Preview */}
@@ -232,9 +243,19 @@ export function HomePage({
               Join hundreds of realtors using AI to optimize their listings and
               close deals faster.
             </p>
-            <Button size="lg" onClick={onGetStarted} className="gap-2 bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
-              Get Started Free <ArrowRight className="w-4 h-4" />
-            </Button>
+            <div className="flex gap-4 justify-center">
+              <Button size="lg" onClick={onGetStarted} className="gap-2 bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
+                Analyze Property <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button 
+                size="lg" 
+                onClick={() => onNavigate("superninja")} 
+                className="gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg"
+              >
+                <Zap className="w-5 h-5" />
+                Try SuperNinja AI <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
             <div className="flex items-center justify-center gap-6 mt-8 text-sm text-white/90">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-white" />

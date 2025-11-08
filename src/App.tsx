@@ -3,10 +3,11 @@ import { HomePage } from "./components/HomePage";
 import { AddressInput } from "./components/AddressInput";
 import { Dashboard } from "./components/Dashboard";
 import { MarketingPlan } from "./components/MarketingPlan";
+import { SuperNinjaApp } from "./components/SuperNinjaApp";
 import { MobileMenu } from "./components/MobileMenu";
 import { Toaster } from "./components/ui/sonner";
 
-type View = "home" | "address-input" | "dashboard" | "marketing-plan";
+type View = "home" | "address-input" | "dashboard" | "marketing-plan" | "superninja";
 
 export interface AnalysisData {
   listing: {
@@ -110,6 +111,9 @@ export default function App() {
       )}
       {currentView === "marketing-plan" && (
         <MarketingPlan onNavigate={handleNavigate} onMenuClick={handleMenuClick} />
+      )}
+      {currentView === "superninja" && (
+        <SuperNinjaApp />
       )}
       
       {/* Mobile Menu */}

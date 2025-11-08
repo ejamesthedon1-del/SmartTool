@@ -13,7 +13,7 @@ const app = new Hono();
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-10-29.clover",
+  apiVersion: "2024-10-28.acacia",
 });
 
 // Logger and CORS
